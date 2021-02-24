@@ -1,8 +1,16 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
+function returnVersion() {
+    return "v1.0.0";
+}
+
 function programFinished() {
-    console.log("Finished!");
+    console.log("(" + timeNow() + ") Finished!");
+}
+
+function timeNow() {
+    return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 function delay(time) {
@@ -17,21 +25,20 @@ function sendUrls(urls, i) {
         let name = entry[1];
         name = name.replace('\r', '');
         entry = entry[0];
-        run(entry, name, width, height, delayTime, dates, i, urls, reload);
+        run(entry, name, width, height, delayTime, dates, i, urls, reload, firstDelayTime);
     } else {
         programFinished();
     }
 }
 
-async function run(url, name, width, height, delayTime, dates, index, urls, reload) {
+async function run(url, name, width, height, delayTime, dates, index, urls, reload, firstDelayTime) {
     let urlNum = index + 1;
     let total = urls.length;
-    console.log("Scanning " + name + ": URL " + urlNum.toString() + " of " + total.toString() + ".");
+    console.log("(" + timeNow() + ") Scanning " + name + ": URL " + urlNum.toString() + " of " + total.toString() + ".");
     console.log("")
     for (i = 0; i < dates.length; i++) {
-        console.log("Scanning " + name + " with the date " + dates[i]);
+        console.log("(" + timeNow() + ") Scanning " + name + " with the date " + dates[i]);
         var fullurl = "https://web.archive.org/web/" + dates[i] + "1200/" + url;
-        console.log(fullurl);
         let browser = await puppeteer.launch();
         let page = await browser.newPage();
         await page.setViewport({
@@ -39,21 +46,23 @@ async function run(url, name, width, height, delayTime, dates, index, urls, relo
             height: height,
             isMobile: false
         });
-        console.log("Opening " + name + ", waiting until the website has no network activity.");
+        console.log("(" + timeNow() + ") Opening " + name + ", waiting until the website has no network activity.");
         await page.goto(fullurl, {waitUntil: ['networkidle0'], timeout: 0});
         var output = await page.evaluate(() => {
             return;
         });
+        console.log("(" + timeNow() + ") Page fully loaded, waiting for first delay of " + firstDelayTime.toString() + "ms before reloading to account for redirects.")
+        await delay(firstDelayTime);
         if (reload == "true") {
-            console.log("As reload is enabled in the settings, the page is currently being reloaded.")
+            console.log("(" + timeNow() + ") As reload is enabled in the settings, the page is currently being reloaded.")
             await page.reload({waitUntil: ['networkidle0'], timeout: 0});
         }
-        console.log("Page fully loaded, waiting for delay of " + delayTime.toString() + "ms.")
+        console.log("(" + timeNow() + ") Page fully loaded, waiting for delay of " + delayTime.toString() + "ms.")
         await delay(delayTime);
-        console.log("Delay completed");
+        console.log("(" + timeNow() + ") Delay completed");
         name = name.replace(" ", "_");
         await page.screenshot({ path: 'images/' + name + '_' + dates[i] + '.jpg', type: 'jpeg' });
-        console.log("This has been saved in the images folder as " + name + '_' + dates[i] + '.jpg.');
+        console.log("(" + timeNow() + ") This has been saved in the images folder as " + name + '_' + dates[i] + '.jpg.');
         await page.close();
         await browser.close();
         console.log("");
@@ -63,8 +72,10 @@ async function run(url, name, width, height, delayTime, dates, index, urls, relo
 }
 
 async function fetch() {
-    console.log("webarchive_dl - v1.0.0");
-    console.log("----------------------\n");
+    console.log("----------------------------------------------");
+    console.log("webarchive_dl - " + returnVersion());
+    console.log("https://github.com/sebastiandoe5/webarchive_dl");
+    console.log("----------------------------------------------\n");
     fs.readFile('settings.txt', 'utf8' , (err, data) => {
         if (err) {
             console.log("An arror has occured: " + err)
@@ -87,6 +98,10 @@ async function fetch() {
         delayTime = data[5].split(":");
         delayTime = delayTime[1].trim();
         delayTime = parseInt(delayTime, 10);
+        // FIRSTDELAY - Stored in an integer format
+        firstDelayTime = data[7].split(":");
+        firstDelayTime = firstDelayTime[1].trim();
+        firstDelayTime = parseInt(firstDelayTime, 10);
         // RELOAD - Stored in a string format
         reload = data[6].split(":");
         reload = reload[1].trim();
@@ -94,7 +109,7 @@ async function fetch() {
         // URLs - Stored in an array format
         var i;
         var urls = data;
-        for (i = 0; i < 12; i++) {
+        for (i = 0; i < 13; i++) {
             urls.shift();
         }
         sendUrls(urls, 0);

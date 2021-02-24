@@ -1,14 +1,15 @@
 SETTINGS
 --------
-Enter dates to be scraped (the more dates given, the more likely there will be a good screenshot) in the format YYYYMMDD separated by commas: 20210212,20210213,20210214
+Enter dates to be scraped (the more dates given, the more likely there will be a good screenshot) in the format YYYYMMDD separated by commas: 20081212,20101212
 Screenshot width															    : 1920
 Screenshot height															    : 3000
-Time to wait after full page load before taking screenshot in milliseconds (the longer, the more accurate the screenshot will be)	    : 100000
+Time to wait after reload before taking screenshot in milliseconds (the longer, the more accurate the screenshot will be)	 	    : 200000
 Reload the page before the delay (it takes longer, but creates better results in most cases) (true/false)				    : true
+Time to wait before reload (at least 20000ms is recommended for redirects)								    : 20000
 
 URLS
 ----
 From below the next separator, enter the URLs to scan in the format url::name, for example https://www.adobe.com/uk/::Adobe UK. Each URL be on a new line.
 ----
-https://www.adobe.com/uk/::Adobe UK
-https://www.adobe.com/it/::Adobe Italy
+http://www.google.com/::Google
+http://www.yahoo.com/::Yahoo
