@@ -39,13 +39,14 @@ async function run(url, name, width, height, delayTime, dates, index, urls, relo
     for (i = 0; i < dates.length; i++) {
         console.log("(" + timeNow() + ") Scanning " + name + " with the date " + dates[i]);
         var fullurl = "https://web.archive.org/web/" + dates[i] + "1200/" + url;
-        let browser = await puppeteer.launch();
+        let browser = await puppeteer.launch({headless: false});
         let page = await browser.newPage();
         await page.setViewport({
             width: width,
             height: height,
             isMobile: false
         });
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36 webarchive-dl');
         console.log("(" + timeNow() + ") Opening " + name + ", waiting until the website has no network activity.");
         await page.goto(fullurl, {waitUntil: ['networkidle0'], timeout: 0});
         var output = await page.evaluate(() => {
