@@ -39,7 +39,7 @@ async function run(url, name, width, height, delayTime, dates, index, urls, relo
     for (i = 0; i < dates.length; i++) {
         console.log("(" + timeNow() + ") Scanning " + name + " with the date " + dates[i]);
         var fullurl = "https://web.archive.org/web/" + dates[i] + "1200/" + url;
-        let browser = await puppeteer.launch({headless: false});
+        let browser = await puppeteer.launch();
         let page = await browser.newPage();
         await page.setViewport({
             width: width,
