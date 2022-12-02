@@ -1,6 +1,6 @@
 # webarchive_dl
 
-**Version 1.0.0 has been released. You can download it from [the releases section](https://github.com/sebastiandoe5/webarchive_dl/releases/tag/1.0.0).**
+**Version 1.0.0 has been released. You can download it from [the releases section](https://github.com/sd0e/webarchive_dl/releases/tag/1.0.0).**
 
 webarchive_dl is a tool for downloading screenshots of pages from the Internet Archive's Wayback Machine. It's made using Puppeteer and Node.js and is run from the command line.
 
