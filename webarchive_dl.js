@@ -75,7 +75,7 @@ async function run(url, name, width, height, delayTime, dates, index, urls, relo
 async function fetch() {
     console.log("----------------------------------------------");
     console.log("webarchive_dl - " + returnVersion());
-    console.log("https://github.com/sebastiandoe5/webarchive_dl");
+    console.log("https://github.com/sd0e/webarchive_dl");
     console.log("----------------------------------------------\n");
     fs.readFile('settings.txt', 'utf8' , (err, data) => {
         if (err) {
